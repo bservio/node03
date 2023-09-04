@@ -1,5 +1,4 @@
-import { prisma } from '@/lib/prisma'
-import { PrismaUsersRepository } from '@/repositories/prisma-user-repository'
+import { UsersRepository } from '@/repositories/users-repository'
 import { hash } from 'bcrypt'
 
 interface RegisterServiceProps {
@@ -8,28 +7,27 @@ interface RegisterServiceProps {
 	password: string;
 }
 
-export async function registerService({
-	name,
-	email,
-	password
-}: RegisterServiceProps) {
-	const password_hash = await hash(password, 6)
+export class RegisterService {
+	constructor(private usersRepository: UsersRepository) {
 
-	const userWithSameEmail = await prisma.user.findUnique({
-		where: {
-			email,
+	} 
+	async execute({ 
+		name, 
+		email, 
+		password }: RegisterServiceProps) {
+		const password_hash = await hash(password, 6)
+
+		const userWithSameEmail = await this.usersRepository.findByEmail(email)
+
+		if (userWithSameEmail) {
+			throw new Error('Email already in use')
 		}
-	})
 
-	if (userWithSameEmail) {
-		throw new Error('Email already in use')
+
+		await this.usersRepository.create({
+			name,
+			email,
+			password_hash
+		})
 	}
-
-	const prismaUserRepository = new PrismaUsersRepository()
-
-	await prismaUserRepository.create({
-		name,
-		email,
-		password_hash
-	})
 }
