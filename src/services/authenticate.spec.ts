@@ -45,7 +45,7 @@ describe('Authenticate Service', () => {
 			password_hash: await hash('12345678', 6)
 		})
 
-		expect(() => sut.execute({
+		await expect(() => sut.execute({
 			email: 'johndoe@example.com',
 			password: '12341234'
 		}),
