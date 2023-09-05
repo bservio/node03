@@ -5,6 +5,20 @@ import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-user
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
 describe('Register Service', () => {
+
+	it('should be able to register', async () => {
+		const usersRepository = new InMemoryUsersRepository()
+		const registerService = new RegisterService(usersRepository)
+
+		const {user} = await registerService.execute({
+			name: 'John Doe',
+			email: 'johndoe@example.com',
+			password: '12345678'
+		})
+
+		expect(user.id).toEqual(expect.any(String))
+	})
+
 	it('should hash user password upon registration', async () => {
 		const usersRepository = new InMemoryUsersRepository()
 		const registerService = new RegisterService(usersRepository) 
