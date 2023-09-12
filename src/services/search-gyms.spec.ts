@@ -46,8 +46,6 @@ describe('Search Gyms Service', () => {
 			})
 		}
 
-		console.log(gymsRepository)
-
 		const { gyms } = await sut.execute({
 			query: 'JavaScript',
 			page: 2,
